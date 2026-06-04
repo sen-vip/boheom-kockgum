@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>콕검 · 보험서류 검토 보조 웹앱</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar" id="top">
+    <div class="topbar-inner">
+      <div class="brand-group">
+        <div class="brand-mark" aria-hidden="true">콕</div>
+        <div>
+          <h1>콕검</h1>
+          <p>보험서류 검토 보조 웹앱</p>
+        </div>
+      </div>
+      <nav class="top-actions" aria-label="상단 바로가기">
+        <span class="security-chip">🛡 서버 전송 없음</span>
+        <a href="#" id="githubLink">GitHub</a>
+        <span>senvip</span>
+        <button type="button" class="top-btn" id="topButton" aria-label="맨 위로 이동">↑</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero card-soft">
+      <div class="hero-copy">
+        <span class="eyebrow">보험 콕검 v0.1</span>
+        <h2>파일은 내 PC에,<br />검토 포인트는 한눈에.</h2>
+        <p class="lead">보험서류에서 확인할 부분을 콕 짚어줍니다.</p>
+        <p class="description">화재보험 · 영업배상책임 · 생산물배상책임 · 여행자보험 항목 여부와 보험기간, 업체명, 주소 후보를 정해진 체크리스트로 확인해요.</p>
+        <div class="hero-badges" aria-label="핵심 특징">
+          <span>🛡 서버 전송 없음</span>
+          <span>📌 확인 포인트 자동 정리</span>
+          <span>📄 검토표 다운로드</span>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="document-illust">
+          <div></div><div></div><div></div><div></div>
+          <span>✓</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="steps" aria-label="진행 단계">
+      <div class="step is-active" data-step="1"><span>1</span> 확인 항목 선택</div>
+      <div class="step" data-step="2"><span>2</span> 파일 올리기</div>
+      <div class="step" data-step="3"><span>3</span> 콕검 시작</div>
+      <div class="step" data-step="4"><span>4</span> 결과 확인</div>
+    </section>
+
+    <section class="card section-card" id="checkOptions">
+      <div class="section-head">
+        <div>
+          <h3>1. 확인할 항목 선택</h3>
+          <p>기본 항목은 모두 선택되어 있어요. 필요 없는 항목만 해제하세요.</p>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <h4>보험 유형</h4>
+        <div class="check-grid">
+          <label><input type="checkbox" name="type" value="fire" checked /> 화재보험</label>
+          <label><input type="checkbox" name="type" value="business" checked /> 영업배상책임보험</label>
+          <label><input type="checkbox" name="type" value="product" checked /> 생산물배상책임보험</label>
+          <label><input type="checkbox" name="type" value="travel" checked /> 여행자보험</label>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <h4>공통 확인 항목</h4>
+        <div class="check-grid compact">
+          <label><input type="checkbox" name="common" value="period" checked /> 보험기간</label>
+          <label><input type="checkbox" name="common" value="vendor" checked /> 업체명 후보</label>
+          <label><input type="checkbox" name="common" value="address" checked /> 주소 후보</label>
+        </div>
+      </div>
+
+      <details class="advanced-box">
+        <summary>고급 옵션 열기</summary>
+        <div class="form-grid">
+          <label>
+            계약명
+            <input type="text" id="contractName" placeholder="예: 2026학년도 통학버스 보험서류 검토" />
+          </label>
+          <label>
+            기준 업체명
+            <input type="text" id="vendorName" placeholder="예: ○○관광" />
+          </label>
+        </div>
+        <p class="hint">기준 업체명을 입력하면 서류에서 찾은 업체명 후보와 비교합니다. 입력하지 않아도 콕검은 실행됩니다.</p>
+      </details>
+    </section>
+
+    <section class="card section-card" id="uploadSection">
+      <div class="section-head">
+        <div>
+          <h3>2. 보험서류 올리기</h3>
+          <p>파일명은 상관없습니다. 내용 기준으로 분석합니다.</p>
+        </div>
+      </div>
+
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" multiple hidden />
+        <div class="upload-icon">↑</div>
+        <strong>PDF, JPG, PNG 파일을 올려주세요</strong>
+        <p>또는 파일을 이곳으로 끌어다 놓으세요</p>
+        <button type="button" class="primary small" id="selectFileButton">파일 선택하기</button>
+      </div>
+
+      <div class="upload-info">
+        <span>지원 형식: PDF · JPG · PNG</span>
+        <span>최대 10개까지 선택 가능</span>
+        <span>권장: 파일 1개당 10MB 이하 · 전체 50MB 이하</span>
+      </div>
+      <p class="security-note">🛡 선택한 파일은 서버로 전송되지 않고 현재 브라우저에서만 분석됩니다.</p>
+    </section>
+
+    <section class="card section-card hidden" id="fileListSection">
+      <div class="section-head simple">
+        <h3>업로드한 파일</h3>
+        <span id="fileTotalText">총 0개 파일</span>
+      </div>
+      <ul class="file-list" id="fileList"></ul>
+    </section>
+
+    <section class="card section-card action-card" id="runSection">
+      <h3>3. 콕검 시작</h3>
+      <p>준비가 끝났으면 보험서류를 읽고 확인 포인트를 정리합니다.</p>
+      <div class="action-row">
+        <button type="button" class="ghost" id="resetButton">입력 초기화</button>
+        <button type="button" class="primary" id="runButton" disabled>콕검 시작하기</button>
+      </div>
+    </section>
+
+    <section class="card section-card progress-card hidden" id="progressSection" aria-live="polite">
+      <h3>콕검 중입니다</h3>
+      <p>보험서류 안의 문구를 읽고 확인 항목을 정리하고 있어요.</p>
+      <div class="progress-meta" id="progressText">현재 진행: 준비 중</div>
+      <div class="progressbar" aria-hidden="true"><div id="progressFill"></div></div>
+      <p class="hint">스캔본이나 흐린 이미지는 글자 인식이 느릴 수 있습니다.</p>
+    </section>
+
+    <section class="results hidden" id="resultsSection">
+      <section class="card section-card">
+        <div class="section-head">
+          <div>
+            <h3>4. 콕검 결과</h3>
+            <p>보험서류 검토 포인트를 정리했습니다.</p>
+          </div>
+        </div>
+        <div class="summary-grid">
+          <div class="summary ok"><span>확인됨</span><strong id="okCount">0건</strong></div>
+          <div class="summary warn"><span>확인 필요</span><strong id="warnCount">0건</strong></div>
+          <div class="summary danger"><span>누락 의심</span><strong id="missingCount">0건</strong></div>
+          <div class="summary gray"><span>분석 어려움</span><strong id="hardCount">0건</strong></div>
+        </div>
+        <p class="notice">최종 판단은 담당자가 원본 서류를 확인해 주세요.</p>
+      </section>
+
+      <section class="card section-card">
+        <h3>필수 항목 체크리스트</h3>
+        <div class="table-wrap">
+          <table class="result-table">
+            <thead>
+              <tr><th>검토 항목</th><th>상태</th><th>확인 내용</th></tr>
+            </thead>
+            <tbody id="checklistBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card section-card">
+        <h3>파일별 분석 결과</h3>
+        <div class="file-analysis" id="fileAnalysis"></div>
+      </section>
+
+      <section class="card section-card">
+        <details class="points-box">
+          <summary>확인 포인트 자세히 보기</summary>
+          <div id="pointsContent" class="points-content"></div>
+        </details>
+      </section>
+
+      <section class="card section-card">
+        <h3>검토 의견</h3>
+        <textarea id="opinionText" rows="7" readonly></textarea>
+        <div class="action-row end">
+          <button type="button" class="ghost" id="copyOpinionButton">검토 의견 복사</button>
+          <button type="button" class="ghost" id="saveTxtButton">TXT 저장</button>
+        </div>
+      </section>
+
+      <section class="card section-card download-card">
+        <div>
+          <h3>결과 저장</h3>
+          <p>검토 결과를 표 형태 파일로 내려받을 수 있습니다.</p>
+        </div>
+        <div class="download-actions">
+          <button type="button" class="success" id="downloadCsvButton">엑셀 검토표 다운로드</button>
+          <button type="button" class="ghost" id="copyAllButton">결과 전체 복사</button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <button type="button" class="floating-top" id="floatingTopButton" aria-label="맨 위로 이동">↑</button>
+
+  <footer class="footer">
+    <p>콕검 · 보험서류 검토 보조 웹앱</p>
+    <p>senvip · GitHub · v0.1</p>
+    <p>서버 전송 없음 · 브라우저 내부 분석</p>
+  </footer>
+</body>
+</html>
