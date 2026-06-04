@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>콕검 · 보험서류 검토 보조 웹앱</title>
+  <title>보험콕검 · 보험서류 검토 보조 웹앱</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
@@ -13,10 +13,10 @@
   <header class="topbar" id="top">
     <div class="topbar-inner">
       <div class="brand-group">
-        <div class="brand-mark" aria-hidden="true">콕</div>
+        <div class="brand-mark" aria-hidden="true">보</div>
         <div>
-          <h1>콕검</h1>
-          <p>보험서류 검토 보조 웹앱</p>
+          <h1>보험콕검</h1>
+          <p>건물화재보험 · 배상책임보험 서류 확인 보조</p>
         </div>
       </div>
       <nav class="top-actions" aria-label="상단 바로가기">
@@ -29,12 +29,25 @@
   </header>
 
   <main class="page-shell">
+    <div class="workspace">
+      <aside class="side-status" aria-label="보험콕검 진행상태">
+        <div class="side-status-title">진행상태</div>
+        <ol>
+          <li class="status-step is-active" data-step="1"><span>1</span><strong>검토 조건</strong></li>
+          <li class="status-step" data-step="2"><span>2</span><strong>필요 보험서류</strong></li>
+          <li class="status-step" data-step="3"><span>3</span><strong>제출파일</strong></li>
+          <li class="status-step" data-step="4"><span>4</span><strong>서류 분석</strong></li>
+          <li class="status-step" data-step="5"><span>5</span><strong>확인결과</strong></li>
+          <li class="status-step" data-step="6"><span>6</span><strong>최종 요약</strong></li>
+        </ol>
+      </aside>
+      <div class="content-flow">
     <section class="hero card-soft">
       <div class="hero-copy">
-        <span class="eyebrow">보험 콕검 v0.1</span>
+        <span class="eyebrow">보험콕검 v0.1</span>
         <h2>파일은 내 PC에,<br />검토 포인트는 한눈에.</h2>
-        <p class="lead">보험서류에서 확인할 부분을 콕 짚어줍니다.</p>
-        <p class="description">화재보험 · 영업배상책임 · 생산물배상책임 · 여행자보험 항목 여부와 보험기간, 업체명, 주소 후보를 정해진 체크리스트로 확인해요.</p>
+        <p class="lead">보험서류에서 확인해야 할 부분을 차분하게 정리합니다.</p>
+        <p class="description">화재보험 · 영업배상책임 · 생산물배상책임 · 여행자보험 항목 여부와 보험기간, 업체명, 주소 후보를 체크리스트로 확인해요.</p>
         <div class="hero-badges" aria-label="핵심 특징">
           <span>🛡 서버 전송 없음</span>
           <span>📌 확인 포인트 자동 정리</span>
@@ -50,10 +63,12 @@
     </section>
 
     <section class="steps" aria-label="진행 단계">
-      <div class="step is-active" data-step="1"><span>1</span> 확인 항목 선택</div>
-      <div class="step" data-step="2"><span>2</span> 파일 올리기</div>
-      <div class="step" data-step="3"><span>3</span> 콕검 시작</div>
-      <div class="step" data-step="4"><span>4</span> 결과 확인</div>
+      <div class="step is-active" data-step="1"><span>1</span> 검토 조건</div>
+      <div class="step" data-step="2"><span>2</span> 필요서류</div>
+      <div class="step" data-step="3"><span>3</span> 제출파일</div>
+      <div class="step" data-step="4"><span>4</span> 분석</div>
+      <div class="step" data-step="5"><span>5</span> 확인결과</div>
+      <div class="step" data-step="6"><span>6</span> 최종요약</div>
     </section>
 
     <section class="card section-card" id="checkOptions">
@@ -132,16 +147,16 @@
     </section>
 
     <section class="card section-card action-card" id="runSection">
-      <h3>3. 콕검 시작</h3>
+      <h3>3. 서류 분석 시작</h3>
       <p>준비가 끝났으면 보험서류를 읽고 확인 포인트를 정리합니다.</p>
       <div class="action-row">
         <button type="button" class="ghost" id="resetButton">입력 초기화</button>
-        <button type="button" class="primary" id="runButton" disabled>콕검 시작하기</button>
+        <button type="button" class="primary" id="runButton" disabled>파일 분석하기</button>
       </div>
     </section>
 
     <section class="card section-card progress-card hidden" id="progressSection" aria-live="polite">
-      <h3>콕검 중입니다</h3>
+      <h3>서류 분석 중입니다</h3>
       <p>보험서류 안의 문구를 읽고 확인 항목을 정리하고 있어요.</p>
       <div class="progress-meta" id="progressText">현재 진행: 준비 중</div>
       <div class="progressbar" aria-hidden="true"><div id="progressFill"></div></div>
@@ -152,7 +167,7 @@
       <section class="card section-card">
         <div class="section-head">
           <div>
-            <h3>4. 콕검 결과</h3>
+            <h3>4. 서류 확인결과</h3>
             <p>보험서류 검토 포인트를 정리했습니다.</p>
           </div>
         </div>
@@ -209,14 +224,15 @@
         </div>
       </section>
     </section>
+      </div>
+    </div>
   </main>
 
   <button type="button" class="floating-top" id="floatingTopButton" aria-label="맨 위로 이동">↑</button>
 
   <footer class="footer">
-    <p>콕검 · 보험서류 검토 보조 웹앱</p>
-    <p>senvip · GitHub · v0.1</p>
-    <p>서버 전송 없음 · 브라우저 내부 분석</p>
+    <p>보험콕검 v0.1 · senvip · GitHub</p>
+    <p>브라우저 내부 분석 · 서버 전송 없음</p>
   </footer>
 </body>
 </html>

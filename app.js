@@ -1,4 +1,4 @@
-/* 콕검 v0.1 - 서버 전송 없는 브라우저 내부 분석 */
+/* 보험콕검 v0.1 - 서버 전송 없는 브라우저 내부 분석 */
 (() => {
   const MAX_FILES = 10;
   const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -112,7 +112,7 @@
     state.files.push(...accepted);
     els.fileInput.value = '';
     renderFileList();
-    updateStep(state.files.length ? 2 : 1);
+    updateStep(state.files.length ? 3 : 1);
 
     if (messages.length) alert(messages.join('\n'));
   }
@@ -151,7 +151,7 @@
 
   async function runAnalysis() {
     if (!state.files.length) return;
-    updateStep(3);
+    updateStep(4);
     showProgress(0, '현재 진행: 분석 준비 중');
     els.progressSection.classList.remove('hidden');
     els.resultsSection.classList.add('hidden');
@@ -201,7 +201,7 @@
       state.pointGroups = result.pointGroups;
       state.opinion = buildOpinion(result.rows);
       renderResults();
-      updateStep(4);
+      updateStep(5);
     } finally {
       els.runButton.disabled = false;
       setTimeout(() => els.progressSection.classList.add('hidden'), 250);
@@ -410,7 +410,7 @@
     if (missing.length) lines.push(`${missing.slice(0, 6).join(', ')} 항목은 업로드 파일에서 명확히 확인되지 않아 누락 의심됩니다.`);
     if (hard.length) lines.push('일부 파일은 글자 인식이 어렵거나 분석 제한이 있어 원본 서류 확인이 필요합니다.');
     lines.push('여행자보험의 보상한도 금액은 학교별 기준에 따라 원본 서류에서 담당자가 직접 확인해 주세요.');
-    lines.push('콕검 결과는 검토 보조용이며, 최종 판단은 담당자가 원본 서류에서 직접 진행해야 합니다.');
+    lines.push('보험콕검 결과는 검토 보조용이며, 최종 판단은 담당자가 원본 서류에서 직접 진행해야 합니다.');
     return lines.join('\n');
   }
 
@@ -551,7 +551,17 @@
   }
 
   function updateStep(active) {
-    $$('.step').forEach(step => step.classList.toggle('is-active', Number(step.dataset.step) === active));
+    const current = Number(active);
+    $$('.step').forEach(step => {
+      const stepNo = Number(step.dataset.step);
+      step.classList.toggle('is-active', stepNo === current);
+      step.classList.toggle('is-done', stepNo < current);
+    });
+    $$('.status-step').forEach(step => {
+      const stepNo = Number(step.dataset.step);
+      step.classList.toggle('is-active', stepNo === current);
+      step.classList.toggle('is-done', stepNo < current);
+    });
   }
 
   function formatBytes(bytes) {
@@ -579,7 +589,7 @@
   }
 
   function saveOpinionTxt() {
-    downloadText('kokgeom-opinion.txt', els.opinionText.value, 'text/plain;charset=utf-8');
+    downloadText('boheom-kockgum-opinion.txt', els.opinionText.value, 'text/plain;charset=utf-8');
   }
 
   function copyAllResults() {
@@ -596,16 +606,16 @@
     const now = new Date().toLocaleString('ko-KR');
     const relatedFiles = state.files.map(file => file.name).join(' / ');
     const rows = state.rows.map(row => {
-      const base = [now, '보험 콕검', row.item, row.status, row.detail, relatedFiles, '', '최종 확인은 담당자 원본 확인'];
+      const base = [now, '보험콕검', row.item, row.status, row.detail, relatedFiles, '', '최종 확인은 담당자 원본 확인'];
       if (contractName || vendorName) base.splice(2, 0, contractName, vendorName);
       return base;
     });
     const csv = toCsv([headers, ...rows]);
-    downloadText('kokgeom-checklist.csv', '\ufeff' + csv, 'text/csv;charset=utf-8');
+    downloadText('boheom-kockgum-checklist.csv', '\ufeff' + csv, 'text/csv;charset=utf-8');
   }
 
   function buildPlainResult() {
-    const lines = ['[콕검 결과]', ''];
+    const lines = ['[보험콕검 결과]', ''];
     state.rows.forEach(row => lines.push(`- ${row.item}: ${row.status} / ${row.detail}`));
     lines.push('', '[검토 의견]', state.opinion);
     return lines.join('\n');
