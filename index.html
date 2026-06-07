@@ -20,7 +20,7 @@
       <div class="brand-group">
         <div class="brand-mark" aria-hidden="true"><img src="favicon.png" alt="" /></div>
         <div class="brand-copy">
-          <h1 class="brand-title">보험콕검 <span class="brand-version">v0.1</span></h1>
+          <h1 class="brand-title">보험콕검 <span class="brand-version">v0.2.5</span></h1>
           <p>보험서류 확인 포인트를 한눈에 정리합니다.</p>
         </div>
       </div>
@@ -54,11 +54,6 @@
               <span>브라우저 내부 분석</span>
               <span>서버 전송 없음</span>
             </div>
-            <div class="hero-actions" aria-label="주요 작업">
-              <a href="#checkOptions" class="hero-action primary-link">확인 항목 정리</a>
-              <a href="#downloadCsvButton" class="hero-action secondary-link">검토표 다운로드</a>
-              <button type="button" class="hero-action reset-link" id="heroResetButton">초기화</button>
-            </div>
           </div>
         </section>
 
@@ -78,6 +73,18 @@
             <strong>분석 시작</strong>
             <p>결과와 검토 의견을 확인합니다.</p>
           </article>
+        </section>
+
+        <section class="tool-strip" aria-label="작업 도구">
+          <div class="tool-strip-copy">
+            <strong>작업 도구</strong>
+            <span>확인 항목을 정리하고, 검토표를 내려받거나 입력을 초기화합니다.</span>
+          </div>
+          <div class="tool-strip-actions">
+            <a href="#checkOptions" class="tool-action primary-link">확인 항목 정리</a>
+            <a href="#downloadCsvButton" class="tool-action secondary-link">검토표 다운로드</a>
+            <button type="button" class="tool-action reset-link" id="heroResetButton">입력 초기화</button>
+          </div>
         </section>
 
         <section class="steps" aria-label="진행 단계">
@@ -215,9 +222,10 @@
 
           <section class="card section-card">
             <div class="section-head simple">
-              <h3>항목별 확인 결과</h3>
+              <h3>보험별 검토 결과</h3>
             </div>
-            <div class="table-wrap">
+            <div id="structuredResult" class="structured-results"></div>
+            <div class="table-wrap legacy-table hidden" aria-hidden="true">
               <table class="result-table">
                 <thead>
                   <tr><th>검토 항목</th><th>상태</th><th>확인 내용</th></tr>
@@ -265,6 +273,14 @@
               <button type="button" class="ghost" id="copyAllButton">결과 전체 복사</button>
             </div>
           </section>
+
+          <section class="final-reset-card" aria-label="다른 서류 재검토">
+            <div>
+              <strong>다른 보험서류를 다시 검토할까요?</strong>
+              <p>현재 입력과 분석 결과를 비우고 새 서류를 올릴 수 있습니다.</p>
+            </div>
+            <button type="button" class="ghost final-reset-button" id="finalResetButton">입력 초기화</button>
+          </section>
         </section>
 
         <section class="audit-note" aria-label="검토 보조용 안내">
@@ -285,7 +301,7 @@
   <button type="button" class="floating-top" id="floatingTopButton" aria-label="맨 위로 이동">↑</button>
 
   <footer class="footer">
-    <p>보험콕검 v0.1 · senvip · <a href="https://sen-vip.github.io/boheom-kockgum/" target="_blank" rel="noopener noreferrer">도움말</a></p>
+    <p>보험콕검 v0.2.5 · senvip · <a href="https://sen-vip.github.io/boheom-kockgum/" target="_blank" rel="noopener noreferrer">도움말</a></p>
     <p>브라우저 내부 분석 · 서버 전송 없음 · 최종 확인은 원본 서류 기준</p>
   </footer>
 </body>
